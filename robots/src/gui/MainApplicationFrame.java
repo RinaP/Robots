@@ -1,28 +1,11 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
+import javax.swing.*;
 import log.Logger;
 
 /**
@@ -36,18 +19,31 @@ public class MainApplicationFrame extends JFrame
     private final JDesktopPane desktopPane = new JDesktopPane();
     private LogWindow logWindow;
     private GameWindow gameWindow;
+    private Rectangle panePosition = new Rectangle();
+    private Rectangle logPosition = new Rectangle();
+    private Rectangle gamePosition = new Rectangle();
+    ArrayList<String> strings = new ArrayList<String>();
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
-        int inset = 50;        
+        int inset = 50;
+        try(BufferedReader reader = new BufferedReader(new FileReader("../config.rbt"))) {
+       	 	String line;
+       	 	while ((line = reader.readLine()) != null) {
+       	 		strings.add(line);
+       	 	}
+    	}
+    	catch(IOException e) {
+    		System.out.println(e.getMessage());
+    	}
+        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
             screenSize.width  - inset*2,
             screenSize.height - inset*2);
-
-        setContentPane(desktopPane);
         
+        setContentPane(desktopPane);
         
         logWindow = createLogWindow();
         addWindow(logWindow);
@@ -55,7 +51,12 @@ public class MainApplicationFrame extends JFrame
         gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
-
+        
+        getPosition();
+        setBounds(panePosition);
+        logWindow.setBounds(logPosition);
+        gameWindow.setBounds(gamePosition);
+        
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
@@ -64,15 +65,13 @@ public class MainApplicationFrame extends JFrame
         setJMenuBar(menuBar);
     }
     
-    protected void saveConstants() {
+    protected void savePosition() {
     	String str = "";
     	
     	Rectangle paneRect = this.getBounds();
     	str += paneRect.x + ":" + paneRect.y + ":" + paneRect.width + ":" + paneRect.height + "\n";
-    	
     	Rectangle logRect = logWindow.getBounds();
     	str += logRect.x + ":" + logRect.y + ":" + logRect.width + ":" + logRect.height + "\n";
-    	
     	Rectangle gameRect = gameWindow.getBounds();
     	str += gameRect.x + ":" + gameRect.y + ":" + gameRect.width + ":" + gameRect.height;
     	
@@ -86,14 +85,23 @@ public class MainApplicationFrame extends JFrame
     	}
     }
     
+    protected void getPosition(){
+    	String[] lp = strings.get(0).split(":");
+    	String[] ll = strings.get(1).split(":");
+    	String[] lg = strings.get(2).split(":");
+    	panePosition = new Rectangle(Integer.parseInt(lp[0]), Integer.parseInt(lp[1]), Integer.parseInt(lp[2]), Integer.parseInt(lp[3])) ;
+    	logPosition = new Rectangle(Integer.parseInt(ll[0]), Integer.parseInt(ll[1]), Integer.parseInt(ll[2]), Integer.parseInt(ll[3])) ;
+    	gamePosition = new Rectangle(Integer.parseInt(lg[0]), Integer.parseInt(lg[1]), Integer.parseInt(lg[2]), Integer.parseInt(lg[3])) ;
+    }
+    
     protected void exit(){
-    	saveConstants();
     	Object[] options = { "Да", "Нет" }; 
     	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
     			"Подтверждение", JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options,
                 options[0]); 
     	if (selectedOption == JOptionPane.YES_OPTION) {
+    		savePosition();
     		System.exit(0);
     		}
     }
@@ -101,7 +109,7 @@ public class MainApplicationFrame extends JFrame
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        //logWindow.setBounds(logRect);
+        //logWindow.setBounds();
         logWindow.setLocation(10,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
