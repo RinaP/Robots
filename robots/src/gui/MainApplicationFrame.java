@@ -94,18 +94,6 @@ public class MainApplicationFrame extends JFrame
     	gamePosition = new Rectangle(Integer.parseInt(lg[0]), Integer.parseInt(lg[1]), Integer.parseInt(lg[2]), Integer.parseInt(lg[3])) ;
     }
     
-    protected void exit(){
-    	Object[] options = { "Да", "Нет" }; 
-    	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
-    			"Подтверждение", JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options,
-                options[0]); 
-    	if (selectedOption == JOptionPane.YES_OPTION) {
-    		savePosition();
-    		System.exit(0);
-    		}
-    }
-    
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
@@ -126,7 +114,8 @@ public class MainApplicationFrame extends JFrame
     
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
- 
+//        menuBar.add(createFileMenu());
+        
         //Set up the lone menu.
         JMenu menu = new JMenu("Document");
         menu.setMnemonic(KeyEvent.VK_D);
@@ -143,17 +132,34 @@ public class MainApplicationFrame extends JFrame
   
         //Set up the second menu item.
         menuItem = new JMenuItem("Quit");
-        menuItem.setMnemonic(KeyEvent.VK_Q);
+        menuItem.setMnemonic(KeyEvent.VK_Q | KeyEvent.VK_ALT);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_Q, ActionEvent.ALT_MASK));
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> {
-        	exit();});
+        	exit();
+        	});
         menu.add(menuItem);
  
         return menuBar;
     }
-   
+    protected void exit(){
+    	Object[] options = { "Да", "Нет" }; 
+    	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
+    			"Подтверждение", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, options,
+                options[0]); 
+    	if (selectedOption == JOptionPane.YES_OPTION) {
+    		savePosition();
+    		setVisible(false);
+    		close();
+    		}
+    }
+    public  void close ()  { 
+        WindowEvent winClosingEvent =  new  WindowEvent (  this ,  WindowEvent . WINDOW_CLOSING ); 
+        Toolkit . getDefaultToolkit (). getSystemEventQueue (). postEvent ( winClosingEvent ); 
+    }
+    
     private JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
@@ -164,20 +170,12 @@ public class MainApplicationFrame extends JFrame
                 "Управление режимом отображения приложения");
         
         {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(systemLookAndFeel);
+        	JMenuItem systemLookAndFeel = createLookAndFeelMenuItem("Системная схема", UIManager.getSystemLookAndFeelClassName());
+        	lookAndFeelMenu.add(systemLookAndFeel);
         }
 
         {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
+        	JMenuItem crossplatformLookAndFeel = createLookAndFeelMenuItem("Универсальная схема", UIManager.getCrossPlatformLookAndFeelClassName());
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
 
@@ -197,6 +195,15 @@ public class MainApplicationFrame extends JFrame
         menuBar.add(testMenu);
         return menuBar;
     }
+    private JMenuItem createLookAndFeelMenuItem(String text, String lookAndFeelClassName) {
+    	         JMenuItem systemLookAndFeel = new JMenuItem(text, KeyEvent.VK_S);
+    	         systemLookAndFeel.addActionListener((event) -> {
+    	             setLookAndFeel(lookAndFeelClassName);
+    	             this.invalidate();
+    	         });
+    	         return systemLookAndFeel;
+    	     }
+    	 
     
     private void setLookAndFeel(String className)
     {
