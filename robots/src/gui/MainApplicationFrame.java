@@ -175,12 +175,8 @@ public class MainApplicationFrame extends JFrame
         WindowEvent winClosingEvent =  new  WindowEvent (  this ,  WindowEvent . WINDOW_CLOSING ); 
         Toolkit . getDefaultToolkit (). getSystemEventQueue (). postEvent ( winClosingEvent ); 
     }
-    
-    private JMenuBar generateMenuBar()
-    {
-        JMenuBar menuBar = new JMenuBar();
-        
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+    private JMenu CreateLookAndFeelMenu() {
+    	JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
                 "Управление режимом отображения приложения");
@@ -194,6 +190,13 @@ public class MainApplicationFrame extends JFrame
         	JMenuItem crossplatformLookAndFeel = createLookAndFeelMenuItem("Универсальная схема", UIManager.getCrossPlatformLookAndFeelClassName());
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
+    	return lookAndFeelMenu;
+    }
+    
+    private JMenuBar generateMenuBar()
+    {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu lookAndFeelMenu = CreateLookAndFeelMenu();
 
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
