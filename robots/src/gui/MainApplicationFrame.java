@@ -175,21 +175,13 @@ public class MainApplicationFrame extends JFrame
         WindowEvent winClosingEvent =  new  WindowEvent (  this ,  WindowEvent . WINDOW_CLOSING ); 
         Toolkit . getDefaultToolkit (). getSystemEventQueue (). postEvent ( winClosingEvent ); 
     }
-    private JMenu CreateLookAndFeelMenu() {
+    private JMenu сreateLookAndFeelMenu() {
     	JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
                 "Управление режимом отображения приложения");
-        
-        {
-        	JMenuItem systemLookAndFeel = createLookAndFeelMenuItem("Системная схема", UIManager.getSystemLookAndFeelClassName());
-        	lookAndFeelMenu.add(systemLookAndFeel);
-        }
-
-        {
-        	JMenuItem crossplatformLookAndFeel = createLookAndFeelMenuItem("Универсальная схема", UIManager.getCrossPlatformLookAndFeelClassName());
-            lookAndFeelMenu.add(crossplatformLookAndFeel);
-        }
+        lookAndFeelMenu.add(createLookAndFeelMenuItem("Системная схема", UIManager.getSystemLookAndFeelClassName()));
+        lookAndFeelMenu.add(createLookAndFeelMenuItem("Универсальная схема", UIManager.getCrossPlatformLookAndFeelClassName()));
     	return lookAndFeelMenu;
     }
     private JMenu createTestMenu() {
@@ -210,10 +202,8 @@ public class MainApplicationFrame extends JFrame
     private JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
-        JMenu lookAndFeelMenu = CreateLookAndFeelMenu();
-        JMenu testMenu = createTestMenu();        
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
+        menuBar.add(сreateLookAndFeelMenu());
+        menuBar.add(createTestMenu());
         return menuBar;
     }
     private JMenuItem createLookAndFeelMenuItem(String text, String lookAndFeelClassName) {
