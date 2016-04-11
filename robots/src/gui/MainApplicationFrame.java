@@ -22,22 +22,12 @@ public class MainApplicationFrame extends JFrame
     private Rectangle panePosition = new Rectangle();
     private Rectangle logPosition = new Rectangle();
     private Rectangle gamePosition = new Rectangle();
-    ArrayList<String> strings = new ArrayList<String>();
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
         int inset = 50;
-        try(BufferedReader reader = new BufferedReader(new FileReader("../config.rbt"))) {
-       	 	String line;
-       	 	while ((line = reader.readLine()) != null) {
-       	 		strings.add(line);
-       	 	}
-    	}
-    	catch(IOException e) {
-    		System.out.println(e.getMessage());
-    	}
-        
+        ArrayList<String> positions = readConfig();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
             screenSize.width  - inset*2,
@@ -52,7 +42,7 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
         
-        getPosition();
+        setPosition(positions);
         setBounds(panePosition);
         logWindow.setBounds(logPosition);
         gameWindow.setBounds(gamePosition);
@@ -63,6 +53,19 @@ public class MainApplicationFrame extends JFrame
         JMenuBar menuBar = generateMenuBar();
         menuBar.add(createMenuBar());
         setJMenuBar(menuBar);
+    }
+    protected ArrayList<String> readConfig(){
+    	ArrayList<String> coords = new ArrayList<String>();
+    	try(BufferedReader reader = new BufferedReader(new FileReader("../config.rbt"))) {
+       	 	String line;
+       	 	while ((line = reader.readLine()) != null) {
+       	 		coords.add(line);
+       	 	}
+    	}
+    	catch(IOException e) {
+    		System.out.println(e.getMessage());
+    	}
+    	return coords;
     }
     
     protected void savePosition() {
@@ -84,20 +87,33 @@ public class MainApplicationFrame extends JFrame
     		System.out.println(e.getMessage());
     	}
     }
+    protected void setPanePosition(String[] arr){
+    	panePosition = new Rectangle(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]), Integer.parseInt(arr[3])) ;
+    }
+    protected void setLogPosition(String[] arr){
+    	logPosition = new Rectangle(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]), Integer.parseInt(arr[3])) ;
+    }
+    protected void setGamePosition(String[] arr){
+    	gamePosition = new Rectangle(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]), Integer.parseInt(arr[3])) ;
+    }
     
-    protected void getPosition(){
-    	String[] lp = strings.get(0).split(":");
-    	String[] ll = strings.get(1).split(":");
-    	String[] lg = strings.get(2).split(":");
-    	panePosition = new Rectangle(Integer.parseInt(lp[0]), Integer.parseInt(lp[1]), Integer.parseInt(lp[2]), Integer.parseInt(lp[3])) ;
-    	logPosition = new Rectangle(Integer.parseInt(ll[0]), Integer.parseInt(ll[1]), Integer.parseInt(ll[2]), Integer.parseInt(ll[3])) ;
-    	gamePosition = new Rectangle(Integer.parseInt(lg[0]), Integer.parseInt(lg[1]), Integer.parseInt(lg[2]), Integer.parseInt(lg[3])) ;
+    protected void setPosition(ArrayList<String> coords){
+    	try {
+	    	String[] lp = coords.get(0).split(":");
+	    	String[] ll = coords.get(1).split(":");
+	    	String[] lg = coords.get(2).split(":");
+	    	setPanePosition(lp);
+	    	setLogPosition(ll);
+	    	setGamePosition(lg);
+	    }
+    	catch(Exception e) {
+    		System.out.println(e.getMessage());
+    	}
     }
     
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        //logWindow.setBounds();
         logWindow.setLocation(10,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
@@ -138,7 +154,7 @@ public class MainApplicationFrame extends JFrame
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> {
         	exit();
-        	});
+        });
         menu.add(menuItem);
  
         return menuBar;
@@ -196,15 +212,14 @@ public class MainApplicationFrame extends JFrame
         return menuBar;
     }
     private JMenuItem createLookAndFeelMenuItem(String text, String lookAndFeelClassName) {
-    	         JMenuItem systemLookAndFeel = new JMenuItem(text, KeyEvent.VK_S);
-    	         systemLookAndFeel.addActionListener((event) -> {
+    	         JMenuItem menuItem = new JMenuItem(text, KeyEvent.VK_S);
+    	         menuItem.addActionListener((event) -> {
     	             setLookAndFeel(lookAndFeelClassName);
     	             this.invalidate();
     	         });
-    	         return systemLookAndFeel;
+    	         return menuItem;
     	     }
     	 
-    
     private void setLookAndFeel(String className)
     {
         try
