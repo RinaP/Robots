@@ -192,24 +192,26 @@ public class MainApplicationFrame extends JFrame
         }
     	return lookAndFeelMenu;
     }
-    
-    private JMenuBar generateMenuBar()
-    {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu lookAndFeelMenu = CreateLookAndFeelMenu();
-
-        JMenu testMenu = new JMenu("Тесты");
+    private JMenu createTestMenu() {
+    	JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
-        
         {
             JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
             addLogMessageItem.addActionListener((event) -> {
                 Logger.debug("Новая строка");
             });
             testMenu.add(addLogMessageItem);
-        }        
+        }
+    	return testMenu;
+    }
+    
+    private JMenuBar generateMenuBar()
+    {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu lookAndFeelMenu = CreateLookAndFeelMenu();
+        JMenu testMenu = createTestMenu();        
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
         return menuBar;
