@@ -47,8 +47,36 @@ public class MainApplicationFrame extends JFrame
         logWindow.setBounds(logPosition);
         gameWindow.setBounds(gamePosition);
         
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setVisible(true);
+        
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowActivated(WindowEvent e) {}
+
+			@Override
+			public void windowClosed(WindowEvent e) {}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exit(e);				
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+
+			@Override
+			public void windowIconified(WindowEvent e) {}
+
+			@Override
+			public void windowOpened(WindowEvent e) {}
+        	
+        });
         
         JMenuBar menuBar = generateMenuBar();
         menuBar.add(createMenuBar());
@@ -153,13 +181,14 @@ public class MainApplicationFrame extends JFrame
                 KeyEvent.VK_Q, ActionEvent.ALT_MASK));
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> {
-        	exit();
+        	WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        	exit(winClosingEvent);
         });
         menu.add(menuItem);
  
         return menuBar;
     }
-    protected void exit(){
+    protected void exit(WindowEvent ev){
     	Object[] options = { "Да", "Нет" }; 
     	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
     			"Подтверждение", JOptionPane.YES_NO_OPTION,
@@ -167,13 +196,13 @@ public class MainApplicationFrame extends JFrame
                 options[0]); 
     	if (selectedOption == JOptionPane.YES_OPTION) {
     		savePosition();
-    		setVisible(false);
-    		close();
+    		ev.getWindow().setVisible(false);
+//    		close(ev);
+    		System.exit(0);
     		}
     }
-    public  void close ()  { 
-        WindowEvent winClosingEvent =  new  WindowEvent (  this ,  WindowEvent . WINDOW_CLOSING ); 
-        Toolkit . getDefaultToolkit (). getSystemEventQueue (). postEvent ( winClosingEvent ); 
+    public  void close (WindowEvent e)  {  
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(e); 
     }
     private JMenu сreateLookAndFeelMenu() {
     	JMenu lookAndFeelMenu = new JMenu("Режим отображения");
