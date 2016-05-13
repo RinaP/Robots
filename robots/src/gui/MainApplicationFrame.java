@@ -22,6 +22,7 @@ public class MainApplicationFrame extends JFrame
     private Rectangle panePosition = new Rectangle();
     private Rectangle logPosition = new Rectangle();
     private Rectangle gamePosition = new Rectangle();
+    private int counter = 0;
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -61,7 +62,7 @@ public class MainApplicationFrame extends JFrame
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				exit(e);				
+					exit(e);				
 			}
 
 			@Override
@@ -182,27 +183,29 @@ public class MainApplicationFrame extends JFrame
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> {
         	WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-        	exit(winClosingEvent);
+        		exit(winClosingEvent);
         });
         menu.add(menuItem);
  
         return menuBar;
     }
     protected void exit(WindowEvent ev){
-    	Object[] options = { "Да", "Нет" }; 
-    	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
-    			"Подтверждение", JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options,
-                options[0]); 
-    	if (selectedOption == JOptionPane.YES_OPTION) {
-    		savePosition();
-    		ev.getWindow().setVisible(false);
-//    		close(ev);
-    		System.exit(0);
+    	if (counter == 0){
+	    	Object[] options = { "Да", "Нет" }; 
+	    	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
+	    			"Подтверждение", JOptionPane.YES_NO_OPTION,
+	                JOptionPane.QUESTION_MESSAGE, null, options,
+	                options[0]); 
+	    	if (selectedOption == JOptionPane.YES_OPTION) {
+		    		savePosition();
+		    		ev.getWindow().setVisible(false);
+		    		close(ev);}
+//    		System.exit(0);
     		}
     }
-    public  void close (WindowEvent e)  {  
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(e); 
+    public  void close (WindowEvent e)  {
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(e);
+        counter++;
     }
     private JMenu сreateLookAndFeelMenu() {
     	JMenu lookAndFeelMenu = new JMenu("Режим отображения");
