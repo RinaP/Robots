@@ -58,23 +58,11 @@ public class MainApplicationFrame extends JFrame
         setVisible(true);
         
         setJMenuBar(generateMenuBar());
-        this.addWindowListener(new WindowListener() {
-        	@Override
-			public void windowActivated(WindowEvent e) {}
-			@Override
-			public void windowClosed(WindowEvent e) {}
-			@Override
+        this.addWindowListener(new WindowAdapter() {
+        	
 			public void windowClosing(WindowEvent e) {
 					exit(e);}
-			@Override
-			public void windowDeactivated(WindowEvent e) {}
-			@Override
-			public void windowDeiconified(WindowEvent e) {}
-			@Override
-			public void windowIconified(WindowEvent e) {}
-			@Override
-			public void windowOpened(WindowEvent e) {}
-        	});
+        });
         
         JMenuBar menuBar = generateMenuBar();
         menuBar.add(createMenuBar());
@@ -180,7 +168,7 @@ public class MainApplicationFrame extends JFrame
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> {
         	WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-        		exit(winClosingEvent);
+        	close(winClosingEvent);
         });
         menu.add(menuItem);
  
@@ -194,16 +182,16 @@ public class MainApplicationFrame extends JFrame
 	                JOptionPane.QUESTION_MESSAGE, null, options,
 	                options[0]); 
 	    	if (selectedOption == JOptionPane.YES_OPTION) {
-		    		savePosition();
-		    		ev.getWindow().setVisible(false);
 		    		close(ev);}
     		}
     }
     public  void close (WindowEvent e)  {
+    	savePosition();
+		e.getWindow().setVisible(false);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(e);
         counter++;
     }
-    private JMenu ñreateLookAndFeelMenu() {
+    private JMenu createLookAndFeelMenu() {
     	JMenu lookAndFeelMenu = new JMenu("Ðåæèì îòîáðàæåíèÿ");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
@@ -230,7 +218,7 @@ public class MainApplicationFrame extends JFrame
     private JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(ñreateLookAndFeelMenu());
+        menuBar.add(createLookAndFeelMenu());
         menuBar.add(createTestMenu());
         return menuBar;
     }
