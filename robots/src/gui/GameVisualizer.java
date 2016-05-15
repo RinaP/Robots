@@ -8,15 +8,29 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import java.util.*;
 import javax.swing.JPanel;
 
-public class GameVisualizer extends JPanel
+public class GameVisualizer extends JPanel implements Observable
 {
+    private java.util.List<Observer> ListObservers;
+//    @Override
+    public void removeObserver(Observer o)
+    {
+        ListObservers.remove(o);
+    }
+//    @Override
+    public void registerObserver(Observer o) {
+        ListObservers.add(o);
+    }
+
+//    @Override
+    public void notifyObservers() {
+        for (Observer observer : ListObservers) {
+            observer.update(m_robotPositionX, m_robotPositionY);
+        }
+    }
     private final Timer m_timer = initTimer();
-    
     private static Timer initTimer() 
     {
         Timer timer = new Timer("events generator", true);
@@ -35,6 +49,7 @@ public class GameVisualizer extends JPanel
     
     public GameVisualizer() 
     {
+    	ListObservers = new ArrayList<Observer>();
         m_timer.schedule(new TimerTask()
         {
             @Override

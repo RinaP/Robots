@@ -17,6 +17,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private CoordWindow coordWindow;
     private LogWindow logWindow;
     private GameWindow gameWindow;
     private Rectangle panePosition = new Rectangle();
@@ -38,10 +39,15 @@ public class MainApplicationFrame extends JFrame
         
         logWindow = createLogWindow();
         addWindow(logWindow);
-
+        
         gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
+        
+        coordWindow = new CoordWindow(gameWindow.m_visualizer);
+        coordWindow.setLocation(870, 90);
+        coordWindow.setSize(250, 90);
+        addWindow(coordWindow);
         
         setPosition(positions);
         setBounds(panePosition);
@@ -53,31 +59,22 @@ public class MainApplicationFrame extends JFrame
         
         setJMenuBar(generateMenuBar());
         this.addWindowListener(new WindowListener() {
-
-			@Override
+        	@Override
 			public void windowActivated(WindowEvent e) {}
-
 			@Override
 			public void windowClosed(WindowEvent e) {}
-
 			@Override
 			public void windowClosing(WindowEvent e) {
-					exit(e);				
-			}
-
+					exit(e);}
 			@Override
 			public void windowDeactivated(WindowEvent e) {}
-
 			@Override
 			public void windowDeiconified(WindowEvent e) {}
-
 			@Override
 			public void windowIconified(WindowEvent e) {}
-
 			@Override
 			public void windowOpened(WindowEvent e) {}
-        	
-        });
+        	});
         
         JMenuBar menuBar = generateMenuBar();
         menuBar.add(createMenuBar());
@@ -200,7 +197,6 @@ public class MainApplicationFrame extends JFrame
 		    		savePosition();
 		    		ev.getWindow().setVisible(false);
 		    		close(ev);}
-//    		System.exit(0);
     		}
     }
     public  void close (WindowEvent e)  {
