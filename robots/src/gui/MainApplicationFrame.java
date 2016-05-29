@@ -23,7 +23,7 @@ public class MainApplicationFrame extends JFrame
     private Rectangle panePosition = new Rectangle();
     private Rectangle logPosition = new Rectangle();
     private Rectangle gamePosition = new Rectangle();
-    private int counter = 0;
+    protected final Robot robot;
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -44,7 +44,9 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
         
-        coordWindow = new CoordWindow(gameWindow.m_visualizer);
+        robot = new Robot();
+//        coordWindow = new CoordWindow(gameWindow.m_visualizer);
+        coordWindow = new CoordWindow(robot);
         coordWindow.setLocation(870, 90);
         coordWindow.setSize(250, 90);
         addWindow(coordWindow);
@@ -168,14 +170,13 @@ public class MainApplicationFrame extends JFrame
         menuItem.setActionCommand("quit");
         menuItem.addActionListener((event) -> {
         	WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-        	close(winClosingEvent);
+        	exit(winClosingEvent);
         });
         menu.add(menuItem);
  
         return menuBar;
     }
     protected void exit(WindowEvent ev){
-    	if (counter == 0){
 	    	Object[] options = { "Да", "Нет" }; 
 	    	int selectedOption = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", 
 	    			"Подтверждение", JOptionPane.YES_NO_OPTION,
@@ -183,13 +184,10 @@ public class MainApplicationFrame extends JFrame
 	                options[0]); 
 	    	if (selectedOption == JOptionPane.YES_OPTION) {
 		    		close(ev);}
-    		}
     }
     public  void close (WindowEvent e)  {
     	savePosition();
-		e.getWindow().setVisible(false);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(e);
-        counter++;
+    	dispose();
     }
     private JMenu createLookAndFeelMenu() {
     	JMenu lookAndFeelMenu = new JMenu("Режим отображения");
